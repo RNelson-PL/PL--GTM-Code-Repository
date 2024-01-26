@@ -1,0 +1,39 @@
+Article Link: https://ezsegment.com/mouse-hover-tracking-in-google-tag-manager-and-google-analytics-4/
+
+
+-- Hover Listener Custom HTML Tag Code: --
+
+<script>
+(function(){
+  var cssSelector = "section.main-about";
+  var dlEventName = 'elementHover';
+  
+  var targetElement = document.querySelector(cssSelector);
+  
+  if(targetElement) {
+    var eventTimout;
+    var eventTimout2;
+    var eventTimout3;
+    
+    targetElement.addEventListener('mouseenter', function(){
+      eventTimout = setTimeout(function(){ sendEvent(5, dlEventName); }, 5000);
+      eventTimout2 = setTimeout(function(){ sendEvent(10, dlEventName); }, 10000);
+      eventTimout3 = setTimeout(function(){ sendEvent(30, dlEventName); }, 30000);
+    });
+    
+    targetElement.addEventListener('mouseleave', function(){
+      clearTimeout(eventTimout);
+      clearTimeout(eventTimout2);
+      clearTimeout(eventTimout3);
+    });  
+  }
+  
+  function sendEvent(duration, event) {
+    window.dataLayer.push({
+      'event': event,
+      'hoverDuration': duration
+    });
+  }
+  
+})();
+</script>

@@ -9,3 +9,5 @@ Code Snippets Added:
 - Ajax Form Listener
 - Vimeo Video Listener/Variable
 - Hover Listener
+- HubSpot Form Listener
+

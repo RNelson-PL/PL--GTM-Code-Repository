@@ -1,0 +1,29 @@
+Custom JS Variable to pull CSS Selector. This can be used to pull the CSS selector in as a variable in GTM.
+
+function() {
+  var element = {{Click Element}};
+  if (!element) {
+    return '';
+  }
+
+  function getUniqueSelector(el) {
+    if (el.tagName.toLowerCase() == 'html') return 'html';
+    var parent = el.parentNode;
+    var tagName = el.tagName.toLowerCase();
+    var index = Array.prototype.indexOf.call(parent.children, el) + 1;
+    var selector = tagName;
+
+    if (el.id) {
+      return '#' + el.id;  // If element has an ID, return the ID selector.
+    }
+
+    if (el.className) {
+      selector += '.' + el.className.trim().split(/\s+/).join('.');
+    }
+
+    selector += ':nth-child(' + index + ')';
+    return getUniqueSelector(parent) + ' > ' + selector;
+  }
+
+  return getUniqueSelector(element);
+}

@@ -3,10 +3,81 @@ Article link : https://www.analyticsmania.com/google-tag-manager-recipes/hubspot
 HubSpot Embedded Forms are able to be tracked, via the Listener Code below. Unfortunately at this time, and external forms are not able to be tracked in GTM.
 Additionally, the only data availible to be sent to HubSpot itself is page views. Any other information will need to be added to the site code from a developer.
 
+**Update Sep 22 2025 - New Hubspot Form builder requires an updated form listener. THis listener provided covers legacy versions as well as the new form builder.**
 
 -- HubSpot Embedded Form Listener Code for Custom HTML Tag --
 
-<script type="text/javascript"> window.addEventListener("message", function(event) 
-{ if(event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormSubmitted') 
-{ window.dataLayer.push({ 'event': 'hubspot-form-success', 'hs-form-guid': event.data.id }); } }); </script>
+<script type="text/javascript">
+
+// Ensure dataLayer is available
+
+window.dataLayer = window.dataLayer || [];
+
+window.addEventListener("message", function (event) {
+
+if (!event.data) return;
+
+// For old legacy forms (v1)
+
+if (event.data.type === 'HS_CTA_FORM_SUBMITTED') {
+
+window.dataLayer.push({
+
+'event': 'hubspot-form-success',
+
+'hs-form-guid': event.data.id || event.data.formId
+
+});
+
+}
+
+// For recent legacy forms (v3)
+
+if (event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormSubmit') {
+
+var formContainer = document.querySelector('.hs-form-frame');
+
+var formId = formContainer ? formContainer.getAttribute('data-form-id') : event.data.id;
+
+window.dataLayer.push({
+
+'event': 'hubspot-form-success',
+
+'hs-form-guid': formId
+
+});
+
+}
+
+});
+
+// For the latest forms (v4 API)
+
+if (document) {
+
+document.addEventListener('hs-form-event:on-submission:success', function (event) {
+
+var formContainer = document.querySelector('.hs-form-frame');
+
+var formId = formContainer ? formContainer.getAttribute('data-form-id') :
+
+(event.detail && event.detail.formId ? event.detail.formId : null);
+
+if (formId) {
+
+window.dataLayer.push({
+
+'event': 'hubspot-form-success',
+
+'hs-form-guid': formId
+
+});
+
+}
+
+});
+
+}
+
+</script>
 
